@@ -10,7 +10,8 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Investor Commitments API",
     description="An API to manage investors and their commitments",
-    version="1.0.0"
+    version="1.0.1",
+    author="Preqin"
 )
 
 # Allow CORS for the frontend (adjust the origins as per your setup)

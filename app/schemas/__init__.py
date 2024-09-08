@@ -1,9 +1,9 @@
-from .investor import InvestorCreate, InvestorResponse, InvestorDetailResponse
+from .investor import InvestorCreate, InvestorDetailResponse, InvestorResponse
 from .commitment import CommitmentCreate, CommitmentResponse
 
 __all__ = [
     "InvestorCreate",
-    "InvestorResponse",
+    "InvestorResponse"
     "InvestorDetailResponse",
     "CommitmentCreate",
     "CommitmentResponse"

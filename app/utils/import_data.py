@@ -6,47 +6,65 @@ from app.models.commitment import Commitment
 from app.db.database import Base
 from datetime import datetime
 
-# Database URL (example: SQLite)
-DATABASE_URL = "sqlite:///./test.db"
+from app.core.config import Settings
 
-engine = create_engine(DATABASE_URL)
+
+engine = create_engine(Settings().DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = SessionLocal()
+Base.metadata.create_all(bind=engine)
+
+
 
 def parse_date(date_str):
+    """Parses date from string to datetime object. Returns None if the string is invalid."""
     try:
-        return datetime.strptime(date_str, '%Y-%m-%d')
+        return datetime.strptime(date_str, '%Y-%m-%d') if date_str else None
     except ValueError:
         return None
 
+def get_or_create_investor(investor_name, investor_type, investor_country, date_added, date_updated):
+    """Fetches an investor by name, or creates a new one if it doesn't exist."""
+    investor = session.query(Investor).filter(Investor.investor_name == investor_name).first()
+    
+    if not investor:
+        investor = Investor(
+            investor_name=investor_name,
+            investor_type=investor_type,
+            investor_country=investor_country,
+            investor_date_added=date_added,
+            investor_last_updated=date_updated
+        )
+        session.add(investor)
+        session.flush()  # Flush to assign an id before using it in commitment
+    
+    return investor
+
 def import_csv_to_db(file_path: str):
+    """Imports data from CSV into the database, handling relationships between Investors and Commitments."""
     with open(file_path, mode='r', newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
-        investor_map = {}  # To map investor names to their database records
 
         for row in reader:
-            investor_name = row['Investor Name']
-            if investor_name not in investor_map:
-                investor = Investor(
-                    investor_name=investor_name,
-                    investor_type=row['Investory Type'],
-                    investor_country=row['Investor Country'],
-                    investor_date_added=parse_date(row['Investor Date Added']),
-                    investor_last_updated=parse_date(row['Investor Last Updated'])
-                )
-                session.add(investor)
-                session.commit()
-                investor_map[investor_name] = investor  # Map investor name to investor object
+            # Create or get investor
+            investor = get_or_create_investor(
+                investor_name=row['Investor Name'],
+                investor_type=row['Investory Type'],
+                investor_country=row['Investor Country'],
+                date_added=parse_date(row['Investor Date Added']),
+                date_updated=parse_date(row['Investor Last Updated'])
+            )
 
             # Create and add commitment record
             commitment = Commitment(
-                investor_id=investor_map[investor_name].id,
+                investor_id=investor.id,
                 asset_class=row['Commitment Asset Class'],
                 amount=float(row['Commitment Amount']),
                 currency=row['Commitment Currency']
             )
             session.add(commitment)
 
+        # Commit session at the end of the process for better performance
         session.commit()
 
 if __name__ == "__main__":

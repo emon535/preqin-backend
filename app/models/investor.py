@@ -1,21 +1,18 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, Float
 from sqlalchemy.orm import relationship
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from app.db.database import Base
+from datetime import datetime
 
 class Investor(Base):
-    __tablename__ = 'investors'
-    
-    id = Column(Integer, primary_key=True, index=True)
-    investor_name = Column(String, index=True)
-    investor_type = Column(String)
-    investor_country = Column(String)
-    investor_date_added = Column(DateTime)
-    investor_last_updated = Column(DateTime)
-    
+    __tablename__ = "investors"
 
+    id = Column(Integer, primary_key=True, index=True)
+    investor_name = Column(String, nullable=False)
+    investor_type = Column(String, nullable=False)
+    investor_country = Column(String, nullable=False)
+    investor_date_added = Column(DateTime, default=datetime.utcnow)
+    investor_last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
     commitments = relationship("Commitment", back_populates="investor")
 

@@ -1,15 +1,14 @@
 from pydantic import BaseModel
-from typing import Optional
 
 class CommitmentBase(BaseModel):
-    investor_id: int
     asset_class: str
     amount: float
     currency: str
 
 class CommitmentCreate(CommitmentBase):
-    pass
+    investor_id: int
 
+# Response schema for Commitments
 class CommitmentResponse(CommitmentBase):
     id: int
 
