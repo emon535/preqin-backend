@@ -15,6 +15,7 @@ class Investor(Base):
     investor_country = Column(String)
     investor_date_added = Column(DateTime)
     investor_last_updated = Column(DateTime)
+    
 
     commitments = relationship("Commitment", back_populates="investor")
 

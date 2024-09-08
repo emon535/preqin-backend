@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -18,4 +19,13 @@ class InvestorResponse(InvestorBase):
     total_commitments: float
 
 class InvestorDetailResponse(InvestorBase):
+    id: int
+    investor_name: str
+    investor_type: str
+    investor_country: str
+    investor_date_added: datetime
+    investor_last_updated: datetime
     total_commitments: float
+
+    class Config:
+        orm_mode = True

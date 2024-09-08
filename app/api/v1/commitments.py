@@ -4,10 +4,6 @@ from app.db.database import get_db
 from app import crud
 from app.schemas.commitment import CommitmentCreate, CommitmentResponse
 
-
-
-
-
 router = APIRouter()
 
 @router.get("/test")
