@@ -19,7 +19,7 @@ class InvestorResponse(InvestorBase):
     total_commitments: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True 
 
 # Detailed Response schema for Investor with Commitments
 class InvestorDetailResponse(InvestorBase):
@@ -30,7 +30,7 @@ class InvestorDetailResponse(InvestorBase):
     investor_date_added: datetime
     investor_last_updated: datetime
     total_commitments: float
-    commitments: List['CommitmentResponse']  # Nested commitments
+    commitments: List[CommitmentResponse]  # Nested commitments
 
     class Config:
-        orm_mode = True
+        from_attributes = True 

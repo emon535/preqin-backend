@@ -11,6 +11,7 @@ class CommitmentCreate(CommitmentBase):
 # Response schema for Commitments
 class CommitmentResponse(CommitmentBase):
     id: int
+    
 
     class Config:
-        orm_mode = True
+       from_attributes = True 

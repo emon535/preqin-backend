@@ -1,13 +1,23 @@
+
+
 from sqlalchemy.orm import Session
-from typing import List
-import models, schemas
+from sqlalchemy import func
+from app.models import Commitment
+from app.schemas import AssetClassBase
 
-def get_asset_classes(db: Session) -> List[models.AssetClass]:
-    return db.query(models.AssetClass).all()
+def get_asset_class_totals(db: Session):
+    results = db.query(
+        Commitment.asset_class,
+        func.sum(Commitment.amount).label('total_value')
+    ).group_by(Commitment.asset_class).all()
 
-def create_asset_class(db: Session, asset_class: schemas.AssetClassCreate) -> models.AssetClass:
-    db_asset_class = models.AssetClass(name=asset_class.name)
-    db.add(db_asset_class)
-    db.commit()
-    db.refresh(db_asset_class)
-    return db_asset_class
+    # Convert results to schema format
+    asset_class_totals = [
+        AssetClassBase(
+            name=asset_class,
+            total_value=total_value
+        )
+        for asset_class, total_value in results
+    ]
+
+    return asset_class_totals
