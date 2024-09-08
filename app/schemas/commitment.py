@@ -1,12 +1,11 @@
-# app/schemas/commitment.py
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
 
 class CommitmentBase(BaseModel):
-    commitment_name: str
-    commitment_amount: float
-    commitment_date: date
+    investor_id: int
+    asset_class: str
+    amount: float
+    currency: str
 
 class CommitmentCreate(CommitmentBase):
     pass

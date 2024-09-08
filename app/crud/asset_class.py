@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import List
-from .. import models, schemas
+import models, schemas
 
 def get_asset_classes(db: Session) -> List[models.AssetClass]:
     return db.query(models.AssetClass).all()

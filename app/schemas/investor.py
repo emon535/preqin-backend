@@ -1,20 +1,21 @@
-
 from pydantic import BaseModel
-from typing import List, Optional
-from datetime import date
+from typing import Optional
 
 class InvestorBase(BaseModel):
     investor_name: str
-    investor_type: Optional[str] = None
-    investor_country: Optional[str] = None
+    investor_type: str
+    investor_country: str
+    investor_date_added: Optional[str]
+    investor_last_updated: Optional[str]
 
 class InvestorCreate(InvestorBase):
     pass
 
-class InvestorResponse(InvestorBase):
-    id: int
-    investor_date_added: date
-    investor_last_updated: date
+class InvestorUpdate(InvestorBase):
+    pass
 
-    class Config:
-        orm_mode = True
+class InvestorResponse(InvestorBase):
+    total_commitments: float
+
+class InvestorDetailResponse(InvestorBase):
+    total_commitments: float

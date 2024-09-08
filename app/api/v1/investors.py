@@ -1,24 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from crud import investor as crud_investors
-from schemas import investor_schemas
-from db.database import get_db
+
 
 router = APIRouter()
 
-@router.get("/investors", response_model=List[investor_schemas.Investor])
-def get_investors(db: Session = Depends(get_db)):
-    investors = crud_investors.get_investors(db)
-    return investors
+# @router.get("/", response_model=List[schemas.InvestorResponse])
+# def read_investors(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+#     print("read_in")
+#     # return {"test": "test"}
+#     return get_investors(db, skip=skip, limit=limit)
 
-@router.get("/investors/{investor_id}", response_model=investor_schemas.Investor)
-def get_investor_by_id(investor_id: int, db: Session = Depends(get_db)):
-    investor = crud_investors.get_investor_by_id(db, investor_id=investor_id)
-    if not investor:
-        raise HTTPException(status_code=404, detail="Investor not found")
-    return investor
+# @router.get("/{investor_id}", response_model=schemas.InvestorDetailResponse)
+# def read_investor(investor_id: int, db: Session = Depends(get_db)):
+#     investor = crud.get_investor_by_id(db, investor_id)
+#     if investor is None:
+#         raise HTTPException(status_code=404, detail="Investor not found")
+#     return investor
 
-@router.post("/investors", response_model=investor_schemas.Investor)
-def create_investor(investor: investor_schemas.InvestorCreate, db: Session = Depends(get_db)):
-    return crud_investors.create_investor(db, investor=investor)
+# @router.post("/", response_model=schemas.InvestorResponse)
+# def create_investor(investor: schemas.InvestorCreate, db: Session = Depends(get_db)):
+#     return crud.create_investor(db, investor)

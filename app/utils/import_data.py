@@ -1,52 +1,53 @@
-import pandas as pd
-from sqlalchemy.orm import Session
-from db.database import engine, SessionLocal
-import models
-from sqlalchemy.exc import SQLAlchemyError
+import csv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.models.investor import Investor
+from app.models.commitment import Commitment
+from app.db.database import Base
+from datetime import datetime
 
-def import_data_from_csv(file_path: str):
-    models.Base.metadata.create_all(bind=engine)
-    df = pd.read_csv(file_path)
-    db = SessionLocal()
+# Database URL (example: SQLite)
+DATABASE_URL = "sqlite:///./test.db"
 
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = SessionLocal()
+
+def parse_date(date_str):
     try:
-        investor_dict = {}
-        for _, row in df.iterrows():
+        return datetime.strptime(date_str, '%Y-%m-%d')
+    except ValueError:
+        return None
+
+def import_csv_to_db(file_path: str):
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        investor_map = {}  # To map investor names to their database records
+
+        for row in reader:
             investor_name = row['Investor Name']
-            investor_type = row['Investory Type']
-            investor_country = row['Investor Country']
-            investor_date_added = pd.to_datetime(row['Investor Date Added']).date()
-            investor_last_updated = pd.to_datetime(row['Investor Last Updated']).date()
-
-            if investor_name not in investor_dict:
-                investor = models.Investor(
+            if investor_name not in investor_map:
+                investor = Investor(
                     investor_name=investor_name,
-                    investor_type=investor_type,
-                    investor_country=investor_country,
-                    investor_date_added=investor_date_added,
-                    investor_last_updated=investor_last_updated
+                    investor_type=row['Investory Type'],
+                    investor_country=row['Investor Country'],
+                    investor_date_added=parse_date(row['Investor Date Added']),
+                    investor_last_updated=parse_date(row['Investor Last Updated'])
                 )
-                db.add(investor)
-                db.commit()
-                db.refresh(investor)
-                investor_dict[investor_name] = investor.id
-            else:
-                investor_id = investor_dict[investor_name]
+                session.add(investor)
+                session.commit()
+                investor_map[investor_name] = investor  # Map investor name to investor object
 
-            commitment = models.Commitment(
-                investor_id=investor_dict[investor_name],
+            # Create and add commitment record
+            commitment = Commitment(
+                investor_id=investor_map[investor_name].id,
                 asset_class=row['Commitment Asset Class'],
-                amount=row['Commitment Amount'],
+                amount=float(row['Commitment Amount']),
                 currency=row['Commitment Currency']
             )
-            db.add(commitment)
+            session.add(commitment)
 
-        db.commit()
-    except SQLAlchemyError as e:
-        db.rollback()
-        print(f"An error occurred: {e}")
-    finally:
-        db.close()
+        session.commit()
 
 if __name__ == "__main__":
-    import_data_from_csv('./../../data/data.csv')  # Provide the path to your CSV file
+    import_csv_to_db('./data.csv')
