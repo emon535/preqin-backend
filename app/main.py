@@ -9,7 +9,7 @@ Base.metadata.create_all(bind=engine)
 # Initialize the FastAPI app
 app = FastAPI(
     title="Investor Commitments API",
-    description="An API to manage investors and their commitments",
+    description="An API to manage investors and their commitments for Preqin",
     version="1.0.1",
     author="Preqin"
 )
