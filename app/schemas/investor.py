@@ -9,6 +9,7 @@ class InvestorBase(BaseModel):
     investor_name: str
     investor_type: str
     investor_country: str
+    investor_date_added: Optional[datetime]
 
 class InvestorCreate(InvestorBase):
     pass

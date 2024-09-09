@@ -1,5 +1,4 @@
 
-
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models import Commitment
@@ -11,7 +10,7 @@ def get_asset_class_totals(db: Session):
         func.sum(Commitment.amount).label('total_value')
     ).group_by(Commitment.asset_class).all()
 
-    # Convert results to schema format
+
     asset_class_totals = [
         AssetClassBase(
             name=asset_class,

@@ -17,14 +17,14 @@ Base.metadata.create_all(bind=engine)
 
 
 def parse_date(date_str):
-    """Parses date from string to datetime object. Returns None if the string is invalid."""
+    
     try:
         return datetime.strptime(date_str, '%Y-%m-%d') if date_str else None
     except ValueError:
         return None
 
 def get_or_create_investor(investor_name, investor_type, investor_country, date_added, date_updated):
-    """Fetches an investor by name, or creates a new one if it doesn't exist."""
+   
     investor = session.query(Investor).filter(Investor.investor_name == investor_name).first()
     
     if not investor:
@@ -36,12 +36,12 @@ def get_or_create_investor(investor_name, investor_type, investor_country, date_
             investor_last_updated=date_updated
         )
         session.add(investor)
-        session.flush()  # Flush to assign an id before using it in commitment
+        session.flush() 
     
     return investor
 
 def import_csv_to_db(file_path: str):
-    """Imports data from CSV into the database, handling relationships between Investors and Commitments."""
+
     with open(file_path, mode='r', newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
 

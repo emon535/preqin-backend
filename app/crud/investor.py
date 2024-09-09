@@ -10,11 +10,10 @@ def get_investors(db: Session, skip: int = 0, limit: int = 10) -> List[schemas.I
     results = []
     for investor in investors:
         total_commitments = db.query(func.sum(Commitment.amount)).filter(Commitment.investor_id == investor.id).scalar() or 0
-        # Convert datetime to string
+       
         investor_date_added_str = investor.investor_date_added.strftime('%Y-%m-%dT%H:%M:%S.%f') if investor.investor_date_added else None
         investor_last_updated_str = investor.investor_last_updated.strftime('%Y-%m-%dT%H:%M:%S.%f') if investor.investor_last_updated else None
         
-        # Create InvestorResponse with datetime as string
         investor_response = schemas.InvestorResponse(
             id=investor.id,
             investor_name=investor.investor_name,
@@ -49,7 +48,6 @@ def get_commitments_by_investor_id(db: Session, investor_id: int, asset_class: O
     
     commitments = query.all()
     
-    # Debugging: print out the number of commitments and details
     print(f"Number of commitments for investor_id {investor_id} with asset_class {asset_class}: {len(commitments)}")
     for commitment in commitments:
         print(f"Commitment ID: {commitment.id}, Investor ID: {commitment.investor_id}, Amount: {commitment.amount}, Asset Class: {commitment.asset_class}")
