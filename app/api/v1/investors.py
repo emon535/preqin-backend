@@ -17,11 +17,11 @@ def read_investor_by_id(investor_id: int, asset_class: Optional[str] = None, db:
     if investor is None:
         raise HTTPException(status_code=404, detail="Investor not found")
     
-    # Fetch commitments for this investor with optional asset_class filtering
+
     commitments = get_commitments_by_investor_id(db, investor_id, asset_class)
     total_commitments = sum(c.amount for c in commitments)
 
-    # Prepare response
+
     return InvestorDetailResponse(
         id=investor.id,
         investor_name=investor.investor_name,
