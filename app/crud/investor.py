@@ -1,18 +1,18 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from app.models import Investor, Commitment
 from app import schemas
 from app.schemas.commitment import CommitmentResponse
 
-def get_commitments_and_total(db: Session, investor_id: int, asset_class: Optional[str] = None) -> (List[Commitment], float):
+
+def get_commitments_and_total(db: Session, investor_id: int, asset_class: Optional[str] = None) -> Tuple[List[Commitment], float]:
     query = db.query(Commitment).filter(Commitment.investor_id == investor_id)
     
     if asset_class:
         query = query.filter(Commitment.asset_class == asset_class)
-    
+
     commitments = query.all()
-    total_commitments = sum(c.amount for c in commitments) if commitments else 0
+    total_commitments = sum(c.amount for c in commitments) if commitments else 0.0
 
     return commitments, total_commitments
 
@@ -59,9 +59,4 @@ def get_commitments_by_investor_id(db: Session, investor_id: int, asset_class: O
         query = query.filter(Commitment.asset_class == asset_class)
     
     commitments = query.all()
-    
-    print(f"Number of commitments for investor_id {investor_id} with asset_class {asset_class}: {len(commitments)}")
-    for commitment in commitments:
-        print(f"Commitment ID: {commitment.id}, Investor ID: {commitment.investor_id}, Amount: {commitment.amount}, Asset Class: {commitment.asset_class}")
-    
     return commitments
