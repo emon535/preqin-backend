@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.schemas import InvestorResponse, InvestorDetailResponse, CommitmentResponse
+from app.schemas import InvestorResponse, InvestorDetailResponse
 from app.db.database import get_db
-from app.crud.investor import get_investors, get_investors_by_id, get_commitments_by_investor_id
+from app.crud.investor import get_investors, get_investors_by_id
 
 router = APIRouter()
 

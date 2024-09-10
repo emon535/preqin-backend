@@ -46,7 +46,6 @@ def import_csv_to_db(file_path: str):
         reader = csv.DictReader(file)
 
         for row in reader:
-            # Create or get investor
             investor = get_or_create_investor(
                 investor_name=row['Investor Name'],
                 investor_type=row['Investory Type'],
@@ -55,7 +54,7 @@ def import_csv_to_db(file_path: str):
                 date_updated=parse_date(row['Investor Last Updated'])
             )
 
-            # Create and add commitment record
+
             commitment = Commitment(
                 investor_id=investor.id,
                 asset_class=row['Commitment Asset Class'],
@@ -64,7 +63,6 @@ def import_csv_to_db(file_path: str):
             )
             session.add(commitment)
 
-        # Commit session at the end of the process for better performance
         session.commit()
 
 if __name__ == "__main__":
